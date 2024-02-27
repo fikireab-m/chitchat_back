@@ -49,10 +49,10 @@ export const authUser = asyncHandler(async (req, res) => {
     if (user && (await user.matchPasswords(password))) {
         generateToken(res, user._id);
         res.status(200).send(user);
-        return;
+    } else {
+        res.status(401);
+        throw new Error('Invalid credential');
     }
-    res.status(401);
-    throw new Error('Invalid credential');
 })
 
 /**
@@ -63,6 +63,10 @@ export const authUser = asyncHandler(async (req, res) => {
  * @access public
  */
 export const logOut = asyncHandler(async (req, res) => {
+    res.cookie('jwt', '', {
+        httpOnly: true,
+        expires: new Date(0),
+    })
     res.status(200).json({ message: 'User logged out' })
 })
 
@@ -74,7 +78,13 @@ export const logOut = asyncHandler(async (req, res) => {
  * @access private
  */
 export const getUserProfile = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: 'User profile' })
+    const user = {
+        _id: req.user._id,
+        fname: req.user.fname,
+        lname: req.user.lname,
+        email: req.user.email
+    }
+    res.status(200).json(user);
 })
 
 /**
