@@ -95,5 +95,22 @@ export const getUserProfile = asyncHandler(async (req, res) => {
  * @access private
  */
 export const updateUserProfile = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: 'User Profile update' })
+    const user = await User.findById(req.user._id);
+    if (user) {
+        user.fname = req.body.fname || user.fname;
+        user.lname = req.body.lname || user.lname;
+        req.email = req.body.email || user.email;
+
+        const updatedUser = await user.save();
+        res.status(200).json({
+            _id: updatedUser._id,
+            fname: updatedUser.fname,
+            lname: updatedUser.lname,
+            email: updatedUser.email
+        });
+
+    } else {
+        res.status(404);
+        throw new Error('User not found');
+    }
 })
