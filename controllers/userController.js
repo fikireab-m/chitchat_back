@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import User from "../models/user";
 
 /**
  * @desc Create new user
@@ -8,7 +9,27 @@ import asyncHandler from "express-async-handler";
  * @access public
  */
 export const registerUser = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: 'User registered' })
+    const { fname, lname, email, password } = req.body;
+
+    if (fname && lname && email && password) {
+
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            res.status(400);
+            throw Error(`Email id - ${email} is already in use`)
+        }
+
+        const user = await User.create({ fname, lname, email, password });
+        if (user) {
+            res.status(201).send(user);
+        } else {
+            res.status(400);
+            throw Error('Invalid user data');
+        }
+    } else {
+        res.status(400);
+        throw Error('Invalid user data');
+    }
 })
 
 /**
