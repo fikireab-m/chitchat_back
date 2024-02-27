@@ -32,6 +32,29 @@ export const registerUser = asyncHandler(async (req, res) => {
     }
 })
 
+
+/**
+ * @desc Auth user / set token
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/users/auth
+ */
+export const authUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!email || !password) {
+        res.status(401);
+        throw new Error('Email and password are required');
+    }
+    if (user && (await user.matchPasswords(password))) {
+        generateToken(res, user._id);
+        res.status(200).send(user);
+        return;
+    }
+    res.status(401);
+    throw new Error('Invalid credential');
+})
+
 /**
  * @desc Auth user / set token to null
  * @param {*} req 
@@ -63,17 +86,4 @@ export const getUserProfile = asyncHandler(async (req, res) => {
  */
 export const updateUserProfile = asyncHandler(async (req, res) => {
     res.status(200).json({ message: 'User Profile update' })
-})
-
-
-/**
- * @desc Auth user / set token
- * @param {*} req 
- * @param {*} res 
- * @route api/users/auth
- */
-export const authUser = asyncHandler(async (req, res) => {
-    // res.status(401);
-    // throw new Error('Something went wrong');
-    res.status(200).json({ message: 'User authorized' })
 })
