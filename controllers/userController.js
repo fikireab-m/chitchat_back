@@ -10,7 +10,7 @@ import generateToken from "../utils/generateToken.js";
  * @access public
  */
 export const registerUser = asyncHandler(async (req, res) => {
-    const { fname, lname, email, password } = req.body;
+    const { fname, lname, email, avatar, password } = req.body;
     if (fname && lname && email && password) {
         const userExists = await User.findOne({ email });
         if (userExists) {
@@ -18,7 +18,7 @@ export const registerUser = asyncHandler(async (req, res) => {
             throw new Error(`Email id - ${email} is already in use`)
         }
 
-        const user = await User.create({ fname, lname, email, password });
+        const user = await User.create({ fname, lname, email, password, avatar });
         if (user) {
             generateToken(res, user._id);
             res.status(201).send(user);
@@ -82,7 +82,8 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         _id: req.user._id,
         fname: req.user.fname,
         lname: req.user.lname,
-        email: req.user.email
+        email: req.user.email,
+        avatar: req.user.avatar
     }
     res.status(200).json(user);
 })
@@ -100,13 +101,15 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
         user.fname = req.body.fname || user.fname;
         user.lname = req.body.lname || user.lname;
         req.email = req.body.email || user.email;
+        req.avatar = req.body.avatar || user.avatar;
 
         const updatedUser = await user.save();
         res.status(200).json({
             _id: updatedUser._id,
             fname: updatedUser.fname,
             lname: updatedUser.lname,
-            email: updatedUser.email
+            email: updatedUser.email,
+            avatar: updatedUser.avatar
         });
 
     } else {

@@ -18,6 +18,9 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, 'password is required']
+    },
+    avatar:{
+        type:String
     }
 },
     { timeStamps: true }
