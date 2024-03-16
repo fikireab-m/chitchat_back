@@ -4,13 +4,15 @@ import {
     registerUser,
     logOut,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    getUsers
 } from "../controllers/userController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 const router = Router();
 
-router.post('/', registerUser);
-router.post('/auth', authUser);
+router.get('/', getUsers);
+router.post('/register', registerUser);
+router.post('/login', authUser);
 router.post('/logout', logOut);
 router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
 
