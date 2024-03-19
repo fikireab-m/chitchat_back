@@ -1,18 +1,35 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const postSchema = mongoose.Schema({
     title: {
         type: String,
-        required: [true, 'first name is required']
+        required: true
     },
     body: {
         type: String,
-        required: [true, 'last name is required']
+        required: true
     },
     author: {
-        type: Schema.Types.ObjectId,
-        required: [true, 'email is required'],
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
         unique: true
+    },
+    impressions: {
+        likes: {
+            type: Number,
+            bsonType: 'int',
+            default: 0
+        },
+        comments: {
+            type: Number,
+            bsonType: 'int',
+            default: 0
+        },
+        shares: {
+            type: Number,
+            bsonType: 'int',
+            default: 0
+        },
     }
 },
     { timeStamps: true }
