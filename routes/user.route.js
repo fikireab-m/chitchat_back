@@ -6,7 +6,7 @@ import {
     getUserProfile,
     updateUserProfile,
     getUsers
-} from "../controllers/userController.js";
+} from "../controllers/user.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
 const router = Router();
 

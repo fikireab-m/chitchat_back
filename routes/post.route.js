@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { addLikeTOPost, createPost, getPosts } from "../controllers/postController.js";
+import { addLikeTOPost, createPost, getPosts } from "../controllers/post.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
-import { createComment, getPostComments } from "../controllers/commentController.js";
+import { createComment, getPostComments } from "../controllers/comment.controller.js";
 
 const router = Router();
 

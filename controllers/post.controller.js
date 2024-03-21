@@ -50,7 +50,7 @@ export const getPosts = asyncHandler(async (req, res, next) => {
 
 
 /**
- * @desc Get all posts
+ * @desc Add like to all post
  * @param {*} req 
  * @param {*} res 
  * @route api/posts
