@@ -43,7 +43,7 @@ export const getPosts = asyncHandler(async (req, res, next) => {
         if (posts) {
             res.status(200).send(posts);
         } else {
-            res.status(200).json({ message: "No post found" });
+            res.status(404).json({ message: "No post found" });
         }
     } catch (error) {
         next(error);
