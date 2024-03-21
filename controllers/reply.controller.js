@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Reply from "../models/reply.js";
+import Comment from "../models/comment.js";
 /**
  * @desc Create new reply
  * @param {*} req 
@@ -28,6 +29,10 @@ export const createReply = asyncHandler(async (req, res, next) => {
             throw new Error("Duplicate reply");
         }
         const reply = await Reply.create({ comment: comment_id, body, user });
+
+        const comment = await Comment.findOne({ _id: comment_id });
+        const repCount = comment.impressions["replies"];
+        comment.impressions["replies"] = repCount + 1;
         res.status(201).json(reply);
     } catch (error) {
         next(error);
