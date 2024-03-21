@@ -11,8 +11,7 @@ const postSchema = mongoose.Schema({
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        unique: true
+        required: true
     },
     impressions: {
         likes: {

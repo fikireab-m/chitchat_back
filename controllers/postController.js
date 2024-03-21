@@ -17,7 +17,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
         throw new Error("Bad request, one or more required fields are missing");
     }
     try {
-        const postExists = Post.findOne({ title: title, author: author });
+        const postExists = await Post.findOne({ $and: [{ title: title }, { author: author }] });
         if (postExists) {
             res.status(400);
             throw new Error("Post with same title by same author already exists");
@@ -39,7 +39,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
 
 export const getPosts = asyncHandler(async (req, res, next) => {
     try {
-        const posts = Post.find();
+        const posts = await Post.find();
         if (posts) {
             res.status(200).send(posts);
         } else {

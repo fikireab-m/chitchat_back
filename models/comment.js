@@ -16,11 +16,13 @@ const commentSchema = mongoose.Schema({
     impressions:{
         likes:{
             type:Number,
-            bsonType:'int'
+            bsonType:'int',
+            default:0
         },
         replies:{
             type:Number,
-            bsonType:'int'
+            bsonType:'int',
+            default:0
         }
     }
 },
