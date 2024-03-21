@@ -1,4 +1,3 @@
-
 import asyncHandler from "express-async-handler";
 import Post from "../models/post.js";
 /**
@@ -36,7 +35,6 @@ export const createPost = asyncHandler(async (req, res, next) => {
  * @route api/posts
  * @access public
  */
-
 export const getPosts = asyncHandler(async (req, res, next) => {
     try {
         const posts = await Post.find();
@@ -49,3 +47,25 @@ export const getPosts = asyncHandler(async (req, res, next) => {
         next(error);
     }
 })
+
+
+/**
+ * @desc Get all posts
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/posts
+ * @access public
+ */
+export const addLikeTOPost = asyncHandler(async (req, res, next) => {
+    const post_id = req.params["id"];
+    try {
+        const post = await Post.findOne({ _id: post_id });
+        const currentLike = post.impressions["likes"];
+        post.impressions["likes"] = currentLike + 1;
+        post.save();
+        res.status(201).send(post);
+    } catch (error) {
+        next(error);
+    }
+})
+
