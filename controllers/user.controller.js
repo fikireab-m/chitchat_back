@@ -96,12 +96,13 @@ export const getUserProfile = asyncHandler(async (req, res) => {
  * @access private
  */
 export const updateUserProfile = asyncHandler(async (req, res) => {
+    const { fname, lname, email, avatar } = req.body;
     const user = await User.findById(req.user._id);
     if (user) {
-        user.fname = req.body.fname || user.fname;
-        user.lname = req.body.lname || user.lname;
-        req.email = req.body.email || user.email;
-        req.avatar = req.body.avatar || user.avatar;
+        user.fname = fname || user.fname;
+        user.lname = lname || user.lname;
+        user.email = email || user.email;
+        user.avatar = avatar || user.avatar;
 
         const updatedUser = await user.save();
         res.status(200).json({
@@ -125,12 +126,12 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
  * @route api/users/
  */
 
-export const getUsers = asyncHandler(async(req, res)=>{
-  const users = await User.find();
-  if (users) {
-    res.status(200).json(users);
-  }else{
-    res.status(404);
-    throw new Error('No users found');
-  }
+export const getUsers = asyncHandler(async (req, res) => {
+    const users = await User.find();
+    if (users) {
+        res.status(200).json(users);
+    } else {
+        res.status(404);
+        throw new Error('No users found');
+    }
 });
