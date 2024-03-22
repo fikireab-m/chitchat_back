@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Post from "../models/post.js";
+
 /**
  * @desc Create new post
  * @param {*} req 
@@ -7,7 +8,6 @@ import Post from "../models/post.js";
  * @route api/posts
  * @access private
  */
-
 export const createPost = asyncHandler(async (req, res, next) => {
     const { title, body, author } = req.body;
 
@@ -23,6 +23,27 @@ export const createPost = asyncHandler(async (req, res, next) => {
         }
         const post = await Post.create({ title, body, author });
         res.status(201).json(post);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * @desc Delete a post
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/posts/:id
+ * @access private
+ */
+export const deletePost = asyncHandler(async (req, res, next) => {
+    const post_id = req.params["id"];
+    try {
+        const postDeleted = await Post.deleteOne({ _id: post_id });
+        if (postDeleted) {
+            res.status(200).json({ message: `Post with id ${post_id} deleted successfully` });
+        } else {
+            res.status(404).json({ message: `No post found with id ${post_id}` });
+        }
     } catch (error) {
         next(error);
     }
@@ -50,11 +71,11 @@ export const getPosts = asyncHandler(async (req, res, next) => {
 
 
 /**
- * @desc Add like to all post
+ * @desc Toggle like of a post
  * @param {*} req 
  * @param {*} res 
  * @route api/posts
- * @access public
+ * @access private
  */
 export const toggleLikeTOPost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
@@ -76,4 +97,3 @@ export const toggleLikeTOPost = asyncHandler(async (req, res, next) => {
         next(error);
     }
 })
-
