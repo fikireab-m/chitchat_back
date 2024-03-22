@@ -53,7 +53,7 @@ export const deletePost = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-})
+});
 
 /**
  * @desc update a post
@@ -83,7 +83,7 @@ export const updatePost = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-})
+});
 
 /**
  * @desc Get all posts
@@ -103,7 +103,7 @@ export const getPosts = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-})
+});
 
 
 /**
@@ -132,4 +132,4 @@ export const toggleLikeTOPost = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-})
+});
