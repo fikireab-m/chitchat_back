@@ -26,21 +26,17 @@ router.route("/")
 
 router.route("/:id")
     .get(getPostComments)
-    .post(protect, createComment);
-
-router.route("/:id/:user_id")
-    .post(protect, toggleLikeTOPost)
+    .post(protect, createComment)
+    .patch(protect, toggleLikeTOPost)
     .put(protect, updatePost)
-    .delete(protect, deletePost);
+    .delete(protect, deletePost)
 
 router.route("/:id/:comment_id")
     .post(protect, createReply)
-    .get(getReplies);
-
-router.route("/:id/:user_id/:comment_id")
+    .get(getReplies)
     .put(protect, toggleLikeTOComment);
 
-router.route("/:id/:user_id/:comment_id/:reply_id")
+router.route("/:id/:comment_id/:reply_id")
     .put(protect, toggleLikeTOReply);
 
 export default router;

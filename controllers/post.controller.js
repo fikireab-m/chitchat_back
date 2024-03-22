@@ -9,7 +9,8 @@ import Post from "../models/post.js";
  * @access private
  */
 export const createPost = asyncHandler(async (req, res, next) => {
-    const { title, body, author } = req.body;
+    const { title, body } = req.body;
+    const author = req.user._id;
 
     if (!title || !body || !author) {
         res.status(400);
@@ -37,13 +38,13 @@ export const createPost = asyncHandler(async (req, res, next) => {
  */
 export const deletePost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
-    const user_id = req.params["user_id"];
+    const user_id = req.user._id;
     try {
         const post = await Post.findById(post_id);
         if (!post) {
             res.status(404).json({ message: `No post found with id ${post_id}` });
         } else {
-            if (post.author.toString() === user_id) {
+            if (post.author.toString().trim() === user_id.toString().trim()) {
                 const postDeleted = await Post.deleteOne({ _id: post_id });
                 if (postDeleted) res.status(200).json({ message: `Post with id ${post_id} was deleted successfully` });
             } else {
@@ -64,14 +65,14 @@ export const deletePost = asyncHandler(async (req, res, next) => {
  */
 export const updatePost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
-    const user_id = req.params["user_id"];
+    const user_id = req.use._id;
 
     const { title, body } = req.body;
 
     try {
         const post = await Post.findById(post_id);
         if (!post) res.status(404).json({ message: `No post found with id ${post_id}` });
-        if (post.author.toString() === user_id) {
+        if (post.author.toString().trim() === user_id.toString().trim()) {
             post.title = title || post.title;
             post.body = body || post.body;
 
@@ -115,7 +116,7 @@ export const getPosts = asyncHandler(async (req, res, next) => {
  */
 export const toggleLikeTOPost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
-    const user_id = req.params["user_id"]
+    const user_id = req.user._id;
     try {
         const post = await Post.findOne({ _id: post_id });
         const currentLike = post.impressions["likes"];
