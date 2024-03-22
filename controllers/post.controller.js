@@ -56,12 +56,20 @@ export const getPosts = asyncHandler(async (req, res, next) => {
  * @route api/posts
  * @access public
  */
-export const addLikeTOPost = asyncHandler(async (req, res, next) => {
+export const toggleLikeTOPost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
+    const user_id = req.params["user_id"]
     try {
         const post = await Post.findOne({ _id: post_id });
         const currentLike = post.impressions["likes"];
-        post.impressions["likes"] = currentLike + 1;
+
+        if (!currentLike.includes(user_id)) {
+            currentLike.push(user_id)
+        } else {
+            currentLike.remove(user_id);
+        }
+
+        post.impressions["likes"] = currentLike;
         post.save();
         res.status(201).send(post);
     } catch (error) {

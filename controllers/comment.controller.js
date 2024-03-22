@@ -25,7 +25,8 @@ export const createComment = asyncHandler(async (req, res, next) => {
         if (comment) {
             const post = await Post.findOne({ _id: post_id });
             const currentComments = post.impressions["comments"];
-            post.impressions["comments"] = currentComments + 1;
+            currentComments.push(comment._id);
+            post.impressions["comments"] = currentComments;
             post.save();
             res.status(201).send(comment);
         }
@@ -46,7 +47,7 @@ export const getPostComments = asyncHandler(async (req, res, next) => {
     try {
         const comments = await Comment.find({ post: postId });
         if (comments) {
-            res.status(200).json({ comments });
+            res.status(200).send(comments);
         } else {
             res.status(404).json({ message: "No comments found" });
         }

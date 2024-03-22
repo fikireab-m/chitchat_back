@@ -31,8 +31,10 @@ export const createReply = asyncHandler(async (req, res, next) => {
         const reply = await Reply.create({ comment: comment_id, body, user });
 
         const comment = await Comment.findOne({ _id: comment_id });
-        const repCount = comment.impressions["replies"];
-        comment.impressions["replies"] = repCount + 1;
+        const reps = comment.impressions["replies"];
+        reps.push(reply._id);
+        comment.impressions["replies"] = reps;
+        comment.save();
         res.status(201).json(reply);
     } catch (error) {
         next(error);

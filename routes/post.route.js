@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addLikeTOPost, createPost, getPosts } from "../controllers/post.controller.js";
+import { toggleLikeTOPost, createPost, getPosts } from "../controllers/post.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { createComment, getPostComments } from "../controllers/comment.controller.js";
 import { createReply } from "../controllers/reply.controller.js";
@@ -11,8 +11,11 @@ router.route("/")
     .post(protect, createPost);
 router.route("/:id")
     .get(getPostComments)
-    .put(protect, addLikeTOPost)
     .post(protect, createComment);
+
+router.route("/:id/:user_id")
+    .put(protect, toggleLikeTOPost);
+
 router.route("/:id/:comment_id")
     .post(protect, createReply);
 
