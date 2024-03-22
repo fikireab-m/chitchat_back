@@ -15,19 +15,16 @@ const postSchema = mongoose.Schema({
     },
     impressions: {
         likes: {
-            type: Number,
-            bsonType: 'int',
-            default: 0
+            type: [mongoose.Schema.Types.ObjectId],
+            default: []
         },
         comments: {
-            type: Number,
-            bsonType: 'int',
-            default: 0
+            type: [mongoose.Schema.Types.ObjectId],
+            default: []
         },
         shares: {
-            type: Number,
-            bsonType: 'int',
-            default: 0
+            type: [mongoose.Schema.Types.ObjectId],
+            default: []
         },
     }
 },

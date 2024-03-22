@@ -13,16 +13,14 @@ const commentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    impressions:{
-        likes:{
-            type:Number,
-            bsonType:'int',
-            default:0
+    impressions: {
+        likes: {
+            type: [mongoose.Schema.Types.ObjectId],
+            default: []
         },
-        replies:{
-            type:Number,
-            bsonType:'int',
-            default:0
+        replies: {
+            type: [mongoose.Schema.Types.ObjectId],
+            default: []
         }
     }
 },
