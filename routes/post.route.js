@@ -3,7 +3,8 @@ import {
     toggleLikeTOPost,
     createPost,
     getPosts,
-    deletePost
+    deletePost,
+    updatePost
 } from "../controllers/post.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import {
@@ -24,11 +25,12 @@ router.route("/")
 
 router.route("/:id")
     .get(getPostComments)
-    .post(protect, createComment)
-    .delete(protect, deletePost);
+    .post(protect, createComment);
 
 router.route("/:id/:user_id")
-    .put(protect, toggleLikeTOPost);
+    .post(protect, toggleLikeTOPost)
+    .put(protect, updatePost)
+    .delete(protect, deletePost);
 
 router.route("/:id/:comment_id")
     .post(protect, createReply)

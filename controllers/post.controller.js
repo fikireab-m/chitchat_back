@@ -37,12 +37,48 @@ export const createPost = asyncHandler(async (req, res, next) => {
  */
 export const deletePost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
+    const user_id = req.params["user_id"];
     try {
-        const postDeleted = await Post.deleteOne({ _id: post_id });
-        if (postDeleted) {
-            res.status(200).json({ message: `Post with id ${post_id} deleted successfully` });
-        } else {
+        const post = await Post.findById(post_id);
+        if (!post) {
             res.status(404).json({ message: `No post found with id ${post_id}` });
+        } else {
+            if (post.author.toString() === user_id) {
+                const postDeleted = await Post.deleteOne({ _id: post_id });
+                if (postDeleted) res.status(200).json({ message: `Post with id ${post_id} was deleted successfully` });
+            } else {
+                res.status(401).json({ message: "Not authorized" });
+            }
+        }
+    } catch (error) {
+        next(error);
+    }
+})
+
+/**
+ * @desc update a post
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/posts/:id
+ * @access private
+ */
+export const updatePost = asyncHandler(async (req, res, next) => {
+    const post_id = req.params["id"];
+    const user_id = req.params["user_id"];
+
+    const { title, body } = req.body;
+
+    try {
+        const post = await Post.findById(post_id);
+        if (!post) res.status(404).json({ message: `No post found with id ${post_id}` });
+        if (post.author.toString() === user_id) {
+            post.title = title || post.title;
+            post.body = body || post.body;
+
+            post.save();
+            res.status(201).send(post);
+        } else {
+            res.status(401).json({ message: "Not authorized" })
         }
     } catch (error) {
         next(error);
