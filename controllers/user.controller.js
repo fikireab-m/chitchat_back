@@ -30,7 +30,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error('Invalid user data');
     }
-})
+});
 
 
 /**
@@ -68,7 +68,7 @@ export const logOut = asyncHandler(async (req, res) => {
         expires: new Date(0),
     })
     res.status(200).json({ message: 'User logged out' })
-})
+});
 
 /**
  * @desc Get user profile
@@ -86,6 +86,22 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         avatar: req.user.avatar
     }
     res.status(200).json(user);
+})
+
+/**
+ * @desc Delete user profile
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/users/profile
+ * @access private
+ */
+export const deleteProfile = asyncHandler(async (req, res) => {
+    await User.deleteOne({ _id: req.user._id });
+    res.cookie('jwt', '', {
+        httpOnly: true,
+        expires: new Date(0),
+    })
+    res.status(200).json({ message: `User with id ${req.user_id} deleted` });
 })
 
 /**
