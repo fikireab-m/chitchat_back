@@ -64,4 +64,30 @@ export const getReplies = asyncHandler(async (req, res, next) => {
 });
 
 
+/**
+ * @desc Toggle like of a reply
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/posts/
+ * @access private
+ */
+export const toggleLikeTOReply = asyncHandler(async (req, res, next) => {
+    const reply_id = req.params["reply_id"];
+    const user_id = req.params["user_id"]
+    try {
+        const reply = await Reply.findOne({ _id: reply_id });
+        const currentLike = reply.likes;
 
+        if (!currentLike.includes(user_id)) {
+            currentLike.push(user_id)
+        } else {
+            currentLike.remove(user_id);
+        }
+
+        reply.likes = currentLike;
+        reply.save();
+        res.status(201).send(reply);
+    } catch (error) {
+        next(error);
+    }
+})

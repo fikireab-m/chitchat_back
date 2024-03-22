@@ -14,7 +14,8 @@ import {
 } from "../controllers/comment.controller.js";
 import {
     createReply,
-    getReplies
+    getReplies,
+    toggleLikeTOReply
 } from "../controllers/reply.controller.js";
 
 const router = Router();
@@ -36,7 +37,10 @@ router.route("/:id/:comment_id")
     .post(protect, createReply)
     .get(getReplies);
 
-router.route("/:id/:comment_id/:user_id")
+router.route("/:id/:user_id/:comment_id")
     .put(protect, toggleLikeTOComment);
+
+router.route("/:id/:user_id/:comment_id/:reply_id")
+    .put(protect, toggleLikeTOReply);
 
 export default router;
