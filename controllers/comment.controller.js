@@ -56,3 +56,31 @@ export const getPostComments = asyncHandler(async (req, res, next) => {
     }
 });
 
+
+/**
+ * @desc Toggle like of a comment
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/posts
+ * @access private
+ */
+export const toggleLikeTOComment = asyncHandler(async (req, res, next) => {
+    const comment_id = req.params["comment_id"];
+    const user_id = req.params["user_id"]
+    try {
+        const comment = await Comment.findOne({ _id: comment_id });
+        const currentLike = comment.impressions["likes"];
+
+        if (!currentLike.includes(user_id)) {
+            currentLike.push(user_id)
+        } else {
+            currentLike.remove(user_id);
+        }
+
+        comment.impressions["likes"] = currentLike;
+        comment.save();
+        res.status(201).send(comment);
+    } catch (error) {
+        next(error);
+    }
+})
