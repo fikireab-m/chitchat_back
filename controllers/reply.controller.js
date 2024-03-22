@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Reply from "../models/reply.js";
 import Comment from "../models/comment.js";
+
 /**
  * @desc Create new reply
  * @param {*} req 
@@ -40,3 +41,27 @@ export const createReply = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
+
+/**
+ * @desc Get replies
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/posts/:id/:comment_id
+ * @access public
+ */
+export const getReplies = asyncHandler(async (req, res, next) => {
+    const comment_id = req.params["comment_id"];
+    try {
+        const replies = await Reply.find({ comment: comment_id });
+        if (replies) {
+            res.status(200).json(replies);
+        } else {
+            res.status(404).json({ message: "No replies found" });
+        }
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+
