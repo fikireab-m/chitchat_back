@@ -16,7 +16,7 @@ router.post('/register', registerUser);
 router.post('/login', authUser);
 router.post('/logout', logOut);
 router.route('/profile')
-    .get(protect, getUserProfile)
+    .get(getUserProfile)
     .put(protect, updateUserProfile)
     .delete(protect, deleteProfile);
 

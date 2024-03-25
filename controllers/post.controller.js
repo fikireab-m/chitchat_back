@@ -65,7 +65,7 @@ export const deletePost = asyncHandler(async (req, res, next) => {
  */
 export const updatePost = asyncHandler(async (req, res, next) => {
     const post_id = req.params["id"];
-    const user_id = req.use._id;
+    const user_id = req.user._id;
 
     const { title, body } = req.body;
 
