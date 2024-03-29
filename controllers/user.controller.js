@@ -50,7 +50,7 @@ export const authUser = asyncHandler(async (req, res) => {
         generateToken(res, user._id);
         res.status(200).send(user);
     } else {
-        res.status(401);
+        res.status(400);
         throw new Error('Invalid credential');
     }
 })
@@ -149,5 +149,23 @@ export const getUsers = asyncHandler(async (req, res) => {
     } else {
         res.status(404);
         throw new Error('No users found');
+    }
+});
+
+/**
+ * @desc Get users
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/users/
+ */
+
+export const getUser = asyncHandler(async (req, res) => {
+    const user_id = req.params['id'];
+    const user = await User.find({ _id: user_id });
+    if (user) {
+        res.status(200).json(user);
+    } else {
+        res.status(404);
+        throw new Error('No user found');
     }
 });
