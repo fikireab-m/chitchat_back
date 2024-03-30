@@ -6,7 +6,7 @@ export const connectDB = async () => {
 
     const uri = process.env.MONGO_URI;
     try {
-        await mongoose.connect(uri).then((con) => {
+        await mongoose.connect(uri, { dbName: 'ChitChatCafe' }).then((con) => {
             console.log(`MongoDB connected - ${con.connection.host}`);
         });
     } catch (err) {

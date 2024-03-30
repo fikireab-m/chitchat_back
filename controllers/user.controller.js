@@ -10,15 +10,15 @@ import generateToken from "../utils/generateToken.js";
  * @access public
  */
 export const registerUser = asyncHandler(async (req, res) => {
-    const { fname, lname, email, avatar, password } = req.body;
-    if (fname && lname && email && password) {
+    const { fname, lname, email, address, avatar, password } = req.body;
+    if (fname && lname && email && address && password) {
         const userExists = await User.findOne({ email });
         if (userExists) {
             res.status(400);
             throw new Error(`Email id - ${email} is already in use`)
         }
 
-        const user = await User.create({ fname, lname, email, password, avatar });
+        const user = await User.create({ fname, lname, email, address, password, avatar });
         if (user) {
             generateToken(res, user._id);
             res.status(201).send(user);
@@ -153,10 +153,11 @@ export const getUsers = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc Get users
+ * @desc Get user by id
  * @param {*} req 
  * @param {*} res 
- * @route api/users/
+ * @route api/users/:id
+ * @access public
  */
 
 export const getUser = asyncHandler(async (req, res) => {

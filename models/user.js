@@ -15,12 +15,23 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    address: {
+        type: {
+            type: String,
+            enum: ['Point', 'Polygon'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
     password: {
         type: String,
         required: true
     },
-    avatar:{
-        type:String
+    avatar: {
+        type: String
     }
 },
     { timeStamps: true }
