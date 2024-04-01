@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.js";
 import generateToken from "../utils/generateToken.js";
+import { text } from "express";
 
 /**
  * @desc Create new user
@@ -168,5 +169,40 @@ export const getUser = asyncHandler(async (req, res) => {
     } else {
         res.status(404);
         throw new Error('No user found');
+    }
+});
+
+
+/**
+ * @desc Get user by id
+ * @param {*} req 
+ * @param {*} res 
+ * @route api/users/:id
+ * @access public
+ */
+
+export const getNearbyUsers = asyncHandler(async (req, res) => {
+    const currentUser = req.user;
+    const centerPoint = currentUser.address.coordinates;
+    if (centerPoint) {
+        const nearbyUsers = await User.aggregate([
+            {
+                $geoNear: {
+                    near: { type: "Point", coordinates: centerPoint },
+                    distanceField: "dist.calculated",
+                    maxDistance: 1000,
+                    includeLocs: "dist.location",
+                    spherical: true
+                 }
+            }
+        ]);
+        if (nearbyUsers) {
+            req.status(200).send(nearbyUsers);
+        } else {
+            req.status(404).json({message:"No users nearby"});
+        }
+    } else {
+        req.status(403);
+        throw new Error('User coordinates aren\'t valid');
     }
 });
