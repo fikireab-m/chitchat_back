@@ -190,19 +190,22 @@ export const getNearbyUsers = asyncHandler(async (req, res) => {
                 $geoNear: {
                     near: { type: "Point", coordinates: centerPoint },
                     distanceField: "dist.calculated",
-                    maxDistance: 1000,
+                    maxDistance: 10000,//in meter
                     includeLocs: "dist.location",
                     spherical: true
-                 }
+                }
+            },
+            {
+                $match:{_id: { $ne: currentUser._id }}
             }
         ]);
         if (nearbyUsers) {
-            req.status(200).send(nearbyUsers);
+            res.status(200).send(nearbyUsers);
         } else {
-            req.status(404).json({message:"No users nearby"});
+            res.status(404).json({ message: "No users nearby" });
         }
     } else {
-        req.status(403);
+        res.status(403);
         throw new Error('User coordinates aren\'t valid');
     }
 });

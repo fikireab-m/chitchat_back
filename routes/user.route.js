@@ -6,7 +6,8 @@ import {
     getUserProfile,
     updateUserProfile,
     getUsers,
-    deleteProfile
+    deleteProfile,
+    getNearbyUsers
 } from "../controllers/user.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
 const router = Router();
@@ -15,6 +16,7 @@ router.get('/', getUsers);
 router.post('/register', registerUser);
 router.post('/login', authUser);
 router.post('/logout', logOut);
+router.route('/nearby').get(protect, getNearbyUsers);
 router.route('/profile')
     .get(getUserProfile)
     .put(protect, updateUserProfile)
