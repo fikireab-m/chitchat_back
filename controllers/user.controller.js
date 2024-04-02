@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.js";
 import generateToken from "../utils/generateToken.js";
-import { parseError, userValidator } from "../middlewares/userValidator.js";
 
 /**
  * @desc Create new user

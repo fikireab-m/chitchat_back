@@ -10,7 +10,8 @@ import {
     getNearbyUsers
 } from "../controllers/user.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
-import { parseError, userValidator } from "../middlewares/userValidator.js";
+import {  userValidator } from "../middlewares/userValidator.js";
+import { parseError } from "../middlewares/errorParser.js";
 const router = Router();
 
 router.get('/', getUsers);

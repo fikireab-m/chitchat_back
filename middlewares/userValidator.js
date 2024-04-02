@@ -26,20 +26,10 @@ export const userValidator = () => [
             if (!validator.isLatLong(coordinates)) {
                 throw new Error(`Invalid address coordinates ${coordinates}`)
             }else{
-                return value;
+                return true;
             }
         }),
 
     body('password').isLength({ min: 4 })
-        .withMessage('Password length should be at least 4 characters'),
+        .withMessage('Password should be at least 4 characters long'),
 ]
-
-export const parseError = (req, res, next) => {
-    const result = validationResult(req)
-    if (result.isEmpty()) {
-        next()
-    } else {
-        res.status(400).json({ error: result.array() })
-    }
-
-}
