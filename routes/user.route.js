@@ -9,8 +9,8 @@ import {
     deleteProfile,
     getNearbyUsers
 } from "../controllers/user.controller.js";
-import { authValidator, protect } from "../middlewares/authMiddleware.js";
-import { userValidator } from "../middlewares/userValidator.js";
+import { protect } from "../middlewares/authMiddleware.js";
+import { authValidator, userValidator } from "../validators/userValidator.js";
 import { parseError } from "../middlewares/errorParser.js";
 const router = Router();
 

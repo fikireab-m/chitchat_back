@@ -33,3 +33,9 @@ export const userValidator = () => [
     body('password').isLength({ min: 4 })
         .withMessage('Password should be at least 4 characters long'),
 ]
+
+
+export const authValidator = () => [
+    body('email').trim().isEmail().withMessage("Invalid email address"),
+    body('password').notEmpty().withMessage("Password is invalid")
+]
