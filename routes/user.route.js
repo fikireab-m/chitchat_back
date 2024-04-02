@@ -16,10 +16,7 @@ const router = Router();
 
 router.get('/', getUsers);
 
-router.post('/register',
-    userValidator(),
-    parseError,
-    registerUser);
+router.post('/register', userValidator(), parseError, registerUser);
 
 router.post('/login', authValidator(), parseError, authUser);
 

@@ -32,10 +32,6 @@ export const registerUser = asyncHandler(
 export const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    if (!email || !password) {
-        res.status(401);
-        throw new Error('Email and password are required');
-    }
     if (user && (await user.matchPasswords(password))) {
         generateToken(res, user._id);
         res.status(200).send(user);
@@ -152,7 +148,7 @@ export const getUsers = asyncHandler(async (req, res) => {
 
 export const getUser = asyncHandler(async (req, res) => {
     const user_id = req.params['id'];
-    const user = await User.find({ _id: user_id });
+    const user = await User.findById({ _id: user_id });
     if (user) {
         res.status(200).json(user);
     } else {
