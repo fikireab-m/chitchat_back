@@ -10,10 +10,11 @@ import {
     getNearbyUsers
 } from "../controllers/user.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
+import { parseError, userValidator } from "../middlewares/userValidator.js";
 const router = Router();
 
 router.get('/', getUsers);
-router.post('/register', registerUser);
+router.post('/register', userValidator(), parseError, registerUser);
 router.post('/login', authUser);
 router.post('/logout', logOut);
 router.route('/nearby').get(protect, getNearbyUsers);

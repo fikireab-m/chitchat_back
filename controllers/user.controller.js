@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.js";
 import generateToken from "../utils/generateToken.js";
-import { text } from "express";
+import { parseError, userValidator } from "../middlewares/userValidator.js";
 
 /**
  * @desc Create new user
@@ -10,28 +10,18 @@ import { text } from "express";
  * @route api/users/register
  * @access public
  */
-export const registerUser = asyncHandler(async (req, res) => {
-    const { fname, lname, email, address, avatar, password } = req.body;
-    if (fname && lname && email && address && password) {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            res.status(400);
-            throw new Error(`Email id - ${email} is already in use`)
-        }
+export const registerUser = asyncHandler(
+    async (req, res) => {
+        const { fname, lname, email, address, avatar, password } = req.body;
 
-        const user = await User.create({ fname, lname, email, address, password, avatar });
+        const user = await User.create({
+            fname, lname, email, address, password, avatar
+        });
         if (user) {
             generateToken(res, user._id);
             res.status(201).send(user);
-        } else {
-            res.status(400);
-            throw new Error('Invalid user data');
         }
-    } else {
-        res.status(400);
-        throw new Error('Invalid user data');
-    }
-});
+    });
 
 
 /**
@@ -196,7 +186,7 @@ export const getNearbyUsers = asyncHandler(async (req, res) => {
                 }
             },
             {
-                $match:{_id: { $ne: currentUser._id }}
+                $match: { _id: { $ne: currentUser._id } }
             }
         ]);
         if (nearbyUsers) {
