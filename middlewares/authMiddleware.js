@@ -1,6 +1,12 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/user.js";
+import { body } from "express-validator";
+
+export const authValidator = () => [
+    body('email').trim().isEmail().withMessage("Invalid email address"),
+    body('password').notEmpty().withMessage("Password is invalid")
+]
 
 export const protect = asyncHandler(async (req, res, next) => {
     let token;

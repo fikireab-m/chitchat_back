@@ -1,4 +1,4 @@
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 import User from "../models/user.js";
 import validator from "validator";
 
@@ -25,7 +25,7 @@ export const userValidator = () => [
             const coordinates = value.join(", ");
             if (!validator.isLatLong(coordinates)) {
                 throw new Error(`Invalid address coordinates ${coordinates}`)
-            }else{
+            } else {
                 return true;
             }
         }),

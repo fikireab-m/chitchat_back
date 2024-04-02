@@ -9,14 +9,14 @@ import {
     deleteProfile,
     getNearbyUsers
 } from "../controllers/user.controller.js";
-import { protect } from "../middlewares/authMiddleware.js";
-import {  userValidator } from "../middlewares/userValidator.js";
+import { authValidator, protect } from "../middlewares/authMiddleware.js";
+import { userValidator } from "../middlewares/userValidator.js";
 import { parseError } from "../middlewares/errorParser.js";
 const router = Router();
 
 router.get('/', getUsers);
 router.post('/register', userValidator(), parseError, registerUser);
-router.post('/login', authUser);
+router.post('/login', authValidator(), parseError, authUser);
 router.post('/logout', logOut);
 router.route('/nearby').get(protect, getNearbyUsers);
 router.route('/profile')
