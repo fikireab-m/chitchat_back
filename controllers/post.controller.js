@@ -11,13 +11,9 @@ import Post from "../models/post.js";
 export const createPost = asyncHandler(async (req, res, next) => {
     const { title, body } = req.body;
     const author = req.user._id;
-
-    if (!title || !body || !author) {
-        res.status(400);
-        throw new Error("Bad request, one or more required fields are missing");
-    }
     try {
-        const postExists = await Post.findOne({ $and: [{ title: title }, { author: author }] });
+        const postExists = await Post.findOne(
+            { $and: [{ title: title }, { author: author }] });
         if (postExists) {
             res.status(400);
             throw new Error("Post with same title by same author already exists");

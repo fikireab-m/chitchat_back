@@ -17,12 +17,14 @@ import {
     getReplies,
     toggleLikeTOReply
 } from "../controllers/reply.controller.js";
+import { postValidator } from "../validators/postValidator.js";
+import { parseError } from "../middlewares/errorParser.js";
 
 const router = Router();
 
 router.route("/")
     .get(getPosts)
-    .post(protect, createPost);
+    .post(protect, postValidator(), parseError, createPost);
 
 router.route("/:id")
     .get(getPostComments)
