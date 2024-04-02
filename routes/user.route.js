@@ -15,10 +15,18 @@ import { parseError } from "../middlewares/errorParser.js";
 const router = Router();
 
 router.get('/', getUsers);
-router.post('/register', userValidator(), parseError, registerUser);
+
+router.post('/register',
+    userValidator(),
+    parseError,
+    registerUser);
+
 router.post('/login', authValidator(), parseError, authUser);
+
 router.post('/logout', logOut);
-router.route('/nearby').get(protect, getNearbyUsers);
+
+router.get('/nearby', protect, getNearbyUsers);
+
 router.route('/profile')
     .get(getUserProfile)
     .put(protect, updateUserProfile)
