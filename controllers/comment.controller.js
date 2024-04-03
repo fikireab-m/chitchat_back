@@ -2,6 +2,7 @@
 import asyncHandler from "express-async-handler";
 import Comment from "../models/comment.js";
 import Post from "../models/post.js";
+import mongoose from "mongoose";
 /**
  * Create a new comment
  * @access private
@@ -43,14 +44,32 @@ export const createComment = asyncHandler(async (req, res, next) => {
  * @param res
  */
 export const getPostComments = asyncHandler(async (req, res, next) => {
-    const postId = req.params["id"];
+    let postId = req.params["id"];
+    let { page, limit } = req.query;
     try {
-        const comments = await Comment.find({ post: postId });
-        if (comments) {
-            res.status(200).send(comments);
-        } else {
-            res.status(404).json({ message: "No comments found" });
-        }
+        page = parseInt(page, 10) || 1;
+        limit = parseInt(limit, 10) || 3;
+        postId = new mongoose.Types.ObjectId(postId);
+
+        const comments = await Comment.aggregate([
+            { $match: { post: { $eq: postId } } },
+            {
+                $facet: {
+                    metadata: [{ $count: 'totalComments' }],
+                    data: [
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit }
+                    ]
+                }
+            }
+        ]);
+        res.status(200).json({
+            comments: {
+                metadata: { 'total comments in post': comments[0].metadata[0].totalComments, page, limit },
+                data: comments[0].data
+            }
+        });
+
     } catch (error) {
         next(error);
     }

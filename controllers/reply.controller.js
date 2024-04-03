@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Reply from "../models/reply.js";
 import Comment from "../models/comment.js";
+import mongoose from "mongoose";
 
 /**
  * @desc Create new reply
@@ -12,8 +13,10 @@ import Comment from "../models/comment.js";
 
 export const createReply = asyncHandler(async (req, res, next) => {
 
-    const { user, body } = req.body;
+    const { body } = req.body;
     const comment_id = req.params["comment_id"];
+
+    const user = req.user;
 
     if (!comment_id || !body || !user) {
         res.status(400);
@@ -22,14 +25,16 @@ export const createReply = asyncHandler(async (req, res, next) => {
     try {
         const replyExists = await Reply.findOne({
             $and: [
-                { user: user }, { body: body }, { comment: comment_id }
+                { user: user._id }, { body: body }, { comment: comment_id }
             ]
         });
         if (replyExists) {
             res.status(400);
             throw new Error("Duplicate reply");
         }
-        const reply = await Reply.create({ comment: comment_id, body, user });
+        const reply = await Reply.create({
+            comment: comment_id, body, user: user._id
+        });
 
         const comment = await Comment.findOne({ _id: comment_id });
         const reps = comment.impressions["replies"];
@@ -50,14 +55,31 @@ export const createReply = asyncHandler(async (req, res, next) => {
  * @access public
  */
 export const getReplies = asyncHandler(async (req, res, next) => {
-    const comment_id = req.params["comment_id"];
+    let comment_id = req.params["comment_id"];
+    let { page, limit } = req.query;
     try {
-        const replies = await Reply.find({ comment: comment_id });
-        if (replies) {
-            res.status(200).json(replies);
-        } else {
-            res.status(404).json({ message: "No replies found" });
-        }
+        comment_id = new mongoose.Types.ObjectId(comment_id);
+        page = parseInt(page, 10) || 1;
+        limit = parseInt(limit, 10) || 3;
+        const replies = await Reply.aggregate([
+            {
+                $match: { comment: { $eq: comment_id } }
+            },
+            {
+                $facet: {
+                    metadata: [{ $count: 'totalReplies' }],
+                    data: [{ $skip: (page - 1) * limit }, { $limit: limit }]
+                }
+            }
+        ])
+        res.status(200).json({
+            replies: {
+                metadata: {
+                    'total replies to comment': replies[0].metadata[0].totalReplies, page, limit
+                },
+                data: replies[0].data
+            }
+        });
     } catch (error) {
         next(error);
     }
