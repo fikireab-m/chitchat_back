@@ -128,14 +128,31 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
  * @route api/users/
  */
 
-export const getUsers = asyncHandler(async (req, res) => {
-    const users = await User.find();
-    if (users) {
-        res.status(200).json(users);
-    } else {
-        res.status(404);
-        throw new Error('No users found');
+export const getUsers = asyncHandler(async (req, res, next) => {
+    let { page, limit } = req.query;
+    try {
+        page = parseInt(page, 10) || 1;
+        limit = parseInt(limit, 10) || 2;
+        const users = await User.aggregate([
+            {
+                $facet: {
+                    metadata: [{ $count: "totalUsers" }],
+                    data: [{ $skip: (page - 1) * limit }, { $limit: limit }]
+                }
+            }
+        ]);
+        res.status(200).json({
+            users: {
+                metadata: {
+                    totalUsers: users[0].metadata[0].totalUsers, page, limit
+                },
+                data: users[0].data
+            }
+        })
+    } catch (error) {
+        next(error)
     }
+
 });
 
 /**

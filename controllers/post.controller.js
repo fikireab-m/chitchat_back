@@ -90,27 +90,27 @@ export const updatePost = asyncHandler(async (req, res, next) => {
  * @access public
  */
 export const getPosts = asyncHandler(async (req, res, next) => {
-    let { page, pageSize } = req.query;
+    let { page, limit } = req.query;
     try {
         page = parseInt(page, 10) || 1;
-        pageSize = parseInt(pageSize, 10) || 3;
+        limit = parseInt(limit, 10) || 3;
 
         // const totalCount = await Post.find().count();
         // const posts = await Post.find()
-        //     .limit(pageSize).skip((page - 1) * pageSize);
+        //     .limit(limit).skip((page - 1) * limit);
 
         const posts = await Post.aggregate([
             {
                 $facet: {
                     metadata: [{ $count: 'totalCount' }],
-                    data: [{ $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+                    data: [{ $skip: (page - 1) * limit }, { $limit: limit }],
                 },
             },
         ]);
         res.status(200).json({
             posts: {
                 metadata: {
-                    totalCount: posts[0].metadata[0].totalCount, page, pageSize
+                    totalCount: posts[0].metadata[0].totalCount, page, limit
                 },
                 data: posts[0].data,
             }
