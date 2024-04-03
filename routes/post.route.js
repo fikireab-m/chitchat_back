@@ -18,7 +18,7 @@ import {
     toggleLikeTOReply
 } from "../controllers/reply.controller.js";
 import { postValidator } from "../validators/postValidator.js";
-import { parseError } from "../middlewares/errorParser.js";
+import { parseError } from "../validators/errorParser.js";
 
 const router = Router();
 
@@ -30,7 +30,7 @@ router.route("/:id")
     .get(getPostComments)
     .post(protect, createComment)
     .patch(protect, toggleLikeTOPost)
-    .put(protect, updatePost)
+    .put(protect, postValidator(), parseError, updatePost)
     .delete(protect, deletePost)
 
 router.route("/:id/:comment_id")
@@ -38,7 +38,6 @@ router.route("/:id/:comment_id")
     .get(getReplies)
     .put(protect, toggleLikeTOComment);
 
-router.route("/:id/:comment_id/:reply_id")
-    .put(protect, toggleLikeTOReply);
+router.put("/:id/:comment_id/:reply_id", protect, toggleLikeTOReply);
 
 export default router;

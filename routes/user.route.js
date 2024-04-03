@@ -11,7 +11,7 @@ import {
 } from "../controllers/user.controller.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { authValidator, userValidator } from "../validators/userValidator.js";
-import { parseError } from "../middlewares/errorParser.js";
+import { parseError } from "../validators/errorParser.js";
 const router = Router();
 
 router.get('/', getUsers);

@@ -90,13 +90,31 @@ export const updatePost = asyncHandler(async (req, res, next) => {
  * @access public
  */
 export const getPosts = asyncHandler(async (req, res, next) => {
+    let { page, pageSize } = req.query;
     try {
-        const posts = await Post.find();
-        if (posts) {
-            res.status(200).send(posts);
-        } else {
-            res.status(404).json({ message: "No post found" });
-        }
+        page = parseInt(page, 10) || 1;
+        pageSize = parseInt(pageSize, 10) || 3;
+
+        // const totalCount = await Post.find().count();
+        // const posts = await Post.find()
+        //     .limit(pageSize).skip((page - 1) * pageSize);
+
+        const posts = await Post.aggregate([
+            {
+                $facet: {
+                    metadata: [{ $count: 'totalCount' }],
+                    data: [{ $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+                },
+            },
+        ]);
+        res.status(200).json({
+            posts: {
+                metadata: {
+                    totalCount: posts[0].metadata[0].totalCount, page, pageSize
+                },
+                data: posts[0].data,
+            }
+        });
     } catch (error) {
         next(error);
     }
