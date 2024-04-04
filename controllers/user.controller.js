@@ -185,8 +185,12 @@ export const getUser = asyncHandler(async (req, res) => {
 
 export const getNearbyUsers = asyncHandler(async (req, res) => {
     const currentUser = req.user;
+    let { page, limit } = req.query;
     const centerPoint = currentUser.address.coordinates;
-    if (centerPoint) {
+    try {
+        page = parseInt(page, 10) || 1;
+        limit = parseInt(limit, 10) || 3;
+
         const nearbyUsers = await User.aggregate([
             {
                 $geoNear: {
@@ -199,15 +203,25 @@ export const getNearbyUsers = asyncHandler(async (req, res) => {
             },
             {
                 $match: { _id: { $ne: currentUser._id } }
+            },
+            {
+                $facet: {
+                    metadata: [{ $count: 'totalNearby' }],
+                    data: [{ $skip: (page - 1) * limit }, { $limit: limit }]
+                }
             }
         ]);
-        if (nearbyUsers) {
-            res.status(200).send(nearbyUsers);
-        } else {
-            res.status(404).json({ message: "No users nearby" });
-        }
-    } else {
+        res.status(200).json({
+            nearbyUsers: {
+                metadata: {
+                    'Total users nearby': nearbyUsers[0].metadata[0].totalNearby,
+                    page, limit
+                },
+                data: nearbyUsers[0].data
+            }
+        });
+    } catch (error) {
         res.status(403);
-        throw new Error('User coordinates aren\'t valid');
+        throw new Error(error);
     }
 });
