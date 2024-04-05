@@ -21,6 +21,7 @@ import User from "./models/user.js";
 import Post from "./models/post.js";
 import Comment from "./models/comment.js";
 import Reply from "./models/reply.js";
+import { Components, componentLoader } from "./components/index.js";
 
 
 dotenv.config();
@@ -41,9 +42,13 @@ AdminJS.registerAdapter({
     Database: AdminJSMongoose.Database,
 })
 
+
 const admin = new AdminJS({
     rootPath: "/admin",
-    branding:"The Chitchat Cafe",
+    dashboard: {
+        component: Components.Dashboard,
+    },
+    componentLoader,
     resources: [
         {
             resource: User, options: {
@@ -97,3 +102,4 @@ io.on('connection', (socket) => {
 
 // app.listen(port, () => console.log(`Server is running at port ${port}`));
 server.listen(port, () => console.log(`Server is running at port ${port}`));
+admin.watch();
