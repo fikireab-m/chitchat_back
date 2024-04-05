@@ -2,13 +2,16 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
+
 import path from "path";
 import { fileURLToPath } from 'url';
-import AdminBro from "admin-bro";
-import AdminBroExpress from '@admin-bro/express';
-import AdminBroMongoose from '@admin-bro/mongoose';
+
+import AdminJS from 'adminjs'
+import AdminJSExpress from '@adminjs/express'
+import * as AdminJSMongoose from '@adminjs/mongoose'
 
 import userRoutes from "./routes/user.route.js";
 import postRoutes from "./routes/post.route.js";
@@ -33,26 +36,38 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-AdminBro.registerAdapter(AdminBroMongoose);
+AdminJS.registerAdapter({
+    Resource: AdminJSMongoose.Resource,
+    Database: AdminJSMongoose.Database,
+})
 
-const AdminBroOptions = {
-    rootPath: '/admin',
+const admin = new AdminJS({
+    rootPath: "/admin",
+    branding:"The Chitchat Cafe",
     resources: [
-        { resource: User, options: { navigation: { name: 'Resources' } } },
-        { resource: Post, options: { navigation: { name: "Resources" } } },
-        { resource: Comment, options: { navigation: { name: "Resources" } } },
-        { resource: Reply, options: { navigation: { name: "Resources" } } },
+        {
+            resource: User, options: {
+                id: 'Users',
+                properties: {
+                    password: { isVisible: false },
+                    email: {
+                        isVisible: {
+                            edit: false,
+                            list: true,
+                            show: true,
+                            filter: true,
+                        }
+                    },
+                }
+            }
+        },
+        { resource: Post, options: { id: 'Posts' } },
+        { resource: Comment, options: { id: 'Comments' } },
+        { resource: Reply, options: { id: 'Replies' } }
     ],
-    // dashboard: {
-    //     component: AdminBro.bundle('./dashboard.jsx')
-    // },
-    branding: {
-        companyName: "The Chitchat Cafe"
-    }
-}
-const adminBro = new AdminBro(AdminBroOptions);
+})
 
-const router = AdminBroExpress.buildRouter(adminBro);
+const adminRouter = AdminJSExpress.buildRouter(admin)
 
 app.use(express.json());
 app.use(cors());
@@ -63,7 +78,7 @@ app.get("/", async (req, res) => {
     res.status(200).sendFile(path.join(__dirname, "/socket.io.html"));
 });
 
-app.use(adminBro.options.rootPath, router)
+app.use(admin.options.rootPath, adminRouter);
 app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 
