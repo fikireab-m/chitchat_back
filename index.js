@@ -17,11 +17,8 @@ import userRoutes from "./routes/user.route.js";
 import postRoutes from "./routes/post.route.js";
 import { notFound, errorHandler } from "./middlewares/errorMiddleware.js";
 import { connectDB } from "./config/db.js";
-import User from "./models/user.js";
-import Post from "./models/post.js";
-import Comment from "./models/comment.js";
-import Reply from "./models/reply.js";
-import { Components, componentLoader } from "./components/index.js";
+import { Components, componentLoader } from "./admin/components/index.js";
+import {resources} from "./admin/resources.js";
 
 
 dotenv.config();
@@ -48,28 +45,8 @@ const admin = new AdminJS({
     dashboard: {
         component: Components.Dashboard,
     },
-    componentLoader,
-    resources: [
-        {
-            resource: User, options: {
-                id: 'Users',
-                properties: {
-                    password: { isVisible: false },
-                    email: {
-                        isVisible: {
-                            edit: false,
-                            list: true,
-                            show: true,
-                            filter: true,
-                        }
-                    },
-                }
-            }
-        },
-        { resource: Post, options: { id: 'Posts' } },
-        { resource: Comment, options: { id: 'Comments' } },
-        { resource: Reply, options: { id: 'Replies' } }
-    ],
+    resources: resources,
+    componentLoader
 })
 
 const adminRouter = AdminJSExpress.buildRouter(admin)

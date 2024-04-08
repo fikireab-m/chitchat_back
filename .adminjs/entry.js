@@ -1,3 +1,3 @@
 AdminJS.UserComponents = {}
-import Dashboard from '../components/Dashboard'
+import Dashboard from '../admin/components/Dashboard'
 AdminJS.UserComponents.Dashboard = Dashboard
