@@ -55,6 +55,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+// app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/", async (req, res) => {
     res.status(200).sendFile(path.join(__dirname, "/socket.io.html"));
